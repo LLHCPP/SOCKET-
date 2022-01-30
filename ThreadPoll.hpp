@@ -46,7 +46,7 @@ public:
                     if (!Running && MyTaskQueue.empty()) {
                         return;
                     }
-                    Task task(move(MyTaskQueue.front()));
+                    Task task(std::move(MyTaskQueue.front()));
                     MyTaskQueue.pop();
                     templock.unlock();
                     --NoTaskNum;
