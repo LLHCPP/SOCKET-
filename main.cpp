@@ -7,6 +7,8 @@
 #include<sys/epoll.h>
 #include<fcntl.h>
 #include<errno.h>
+#include<vector>
+#include<unordered_map>
 void setnoblocking(int fd){
     int flag=fcntl(fd,F_GETFL,0);
     fcntl(fd,F_SETFL,flag|O_NONBLOCK);
