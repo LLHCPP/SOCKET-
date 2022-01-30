@@ -46,8 +46,6 @@ int main(int argc,char* argv[]) {
     sockaddr_in serv_addr;
     sockaddr_in clnt_addr;
     socklen_t clnt_addr_size;
-    int strlen,i;
-    char buffer[4096];
     epoll_event* ep_events;
     epoll_event event;
     int epfd,events_cnt;
@@ -86,7 +84,7 @@ int main(int argc,char* argv[]) {
             std::cout<<"epoll_wait() failed"<<std::endl;
             break;
         }
-        for(i=0;i<events_cnt;++i){
+        for(int i=0;i<events_cnt;++i){
             if(ep_events[i].data.fd==serv_sock){
                 clnt_addr_size=sizeof(clnt_addr);
                 clnt_sock=accept(serv_sock,(sockaddr*)&clnt_addr,&clnt_addr_size);
