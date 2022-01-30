@@ -8,11 +8,39 @@
 #include<fcntl.h>
 #include<errno.h>
 #include"ThreadPoll.hpp"
+
+void recmessage(int epfd,int clnt){
+    char tempbuffer[4096];
+    char buffer[20];//临时数据
+    const char ans[]="这是我的回复:";
+    std::cout<<"开始读取数据"<<std::endl;
+    strcpy(tempbuffer,ans);
+    int countlen=sizeof(ans)-1;
+    while(true){
+        int strlen=read(clnt,buffer,10);
+        if(strlen ==0){
+            std::cout<<"client :"<<clnt<<"is disconnected"<<std::endl;
+            epoll_ctl(epfd,EPOLL_CTL_DEL,clnt,nullptr);//本身线程安全
+            close(clnt);
+        }else if(strlen<0){
+            if(errno==EAGAIN){//errno也是线程安全
+                write(clnt,tempbuffer,countlen);
+                break;
+            }
+        }else{
+            memcpy(&tempbuffer[countlen],buffer,strlen);
+            countlen+=strlen;
+            std::cout<<"读取数据长度为"<<countlen<<std::endl;
+        }
+    }
+}
+
 void setnoblocking(int fd){
     int flag=fcntl(fd,F_GETFL,0);
     fcntl(fd,F_SETFL,flag|O_NONBLOCK);
 }
 int main(int argc,char* argv[]) {
+    ThreadPool &mypool=ThreadPool::getThreadPool();
     int serv_sock;
     int clnt_sock;
     sockaddr_in serv_addr;
@@ -68,28 +96,8 @@ int main(int argc,char* argv[]) {
                 epoll_ctl(epfd,EPOLL_CTL_ADD,clnt_sock,&event);
                 std::cout<<"client connected"<<clnt_sock <<std::endl;
             }else{
-                char tempbuffer[4096];
-                const char ans[]="这是我的回复:";
-                std::cout<<"开始读取数据"<<std::endl;
-                strcpy(tempbuffer,ans);
-                int countlen=sizeof(ans)-1;
-                while(true){
-                    strlen=read(ep_events[i].data.fd,buffer,10);
-                    if(strlen ==0){
-                        std::cout<<"client :"<<ep_events[i].data.fd<<"is disconnected"<<std::endl;
-                        epoll_ctl(epfd,EPOLL_CTL_DEL,ep_events[i].data.fd,nullptr);
-                        close(ep_events[i].data.fd);
-                    }else if(strlen<0){
-                        if(errno==EAGAIN){
-                            write(ep_events[i].data.fd,tempbuffer,countlen);
-                            break;
-                        }
-                    }else{
-                        memcpy(&tempbuffer[countlen],buffer,strlen);
-                        countlen+=strlen;
-                        std::cout<<"读取数据长度为"<<countlen<<std::endl;
-                    }
-                }
+                int k=ep_events[i].data.fd;
+                mypool.commit(recmessage,epfd,k);
             }
         }
     }
