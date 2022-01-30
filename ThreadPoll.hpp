@@ -10,17 +10,20 @@
 #include <condition_variable>
 #include <thread>
 #include <functional>
+#include "boost/lockfree/queue.hpp"
 class ThreadPool {
 private:
     const uint16_t THREADPOOL_MAX_NUM=16;
     using Task = std::function<void()>;
     std::vector<std::thread> MyPool;//线程池
     std::queue<Task> MyTaskQueue;//任务队列
+//    boost::lockfree::queue<Task*> FreeTakQueue;//尝试使用无锁队列
     std::mutex MyLock;//互斥锁
     std::condition_variable ConLock;//条件锁
     std::atomic<bool> Running{true};//运行状态
-    std::atomic<uint16_t> NoTaskNum{0};
+    std::atomic<uint16_t> NoTaskNum{0};//空闲线程
     explicit ThreadPool(uint16_t size = 2){
+        MyPool.reserve(THREADPOOL_MAX_NUM);
         this->addThread(size);
     };
     ThreadPool operator=(ThreadPool& rhs)=delete;
