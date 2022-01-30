@@ -10,9 +10,9 @@
 #include <condition_variable>
 #include <thread>
 #include <functional>
-#define  THREADPOOL_MAX_NUM 16
 class ThreadPool {
 private:
+    const uint16_t THREADPOOL_MAX_NUM=16;
     using Task = std::function<void()>;
     std::vector<std::thread> MyPool;//线程池
     std::queue<Task> MyTaskQueue;//任务队列
@@ -26,6 +26,10 @@ private:
     ThreadPool operator=(ThreadPool& rhs)=delete;
     ThreadPool(ThreadPool& rhs)=delete;
 public:
+    static ThreadPool& getThreadPool(){
+        static ThreadPool ans;
+        return ans;
+    }
     void addThread(uint16_t size){
         for (; MyPool.size() < THREADPOOL_MAX_NUM && size > 0; --size) {
             MyPool.emplace_back([this]() {
