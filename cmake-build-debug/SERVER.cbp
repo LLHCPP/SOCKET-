@@ -82,6 +82,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/mnt/f/SERVER/ThreadPoll.hpp">
+			<Option target="SERVER"/>
+		</Unit>
 		<Unit filename="/mnt/f/SERVER/main.cpp">
 			<Option target="SERVER"/>
 		</Unit>
