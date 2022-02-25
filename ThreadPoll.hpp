@@ -65,10 +65,12 @@ public:
         ); // 把函数入口及参数,打包(绑定)
         std::future<RetType> future = task->get_future();
         {    // 添加任务到队列
-            std::lock_guard<std::mutex> lock{MyLock};//对当前块的语句加锁  lock_guard 是 mutex 的 stack 封装类，构造的时候 lock()，析构的时候 unlock()
+//            std::lock_guard<std::mutex> lock{MyLock};//对当前块的语句加锁  lock_guard 是 mutex 的 stack 封装类，构造的时候 lock()，析构的时候 unlock()
+            MyLock.lock();
             MyTaskQueue.emplace([task]() { // push(Task{...}) 放到队列后面
                 (*task)();
             });
+            MyLock.unlock();
         }
 
         if (NoTaskNum < 1 && MyPool.size() < THREADPOOL_MAX_NUM) {

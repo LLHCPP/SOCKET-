@@ -3,11 +3,13 @@
 #include<arpa/inet.h>
 #include<sys/socket.h>
 #include<cstring>
-#include<sys/time.h>
 #include<sys/epoll.h>
 #include<fcntl.h>
-#include<errno.h>
+#include<cerrno>
 #include"ThreadPoll.hpp"
+#include<unordered_map>
+#include<stack>
+using namespace std;
 
 void recmessage(int epfd,int clnt){
     char tempbuffer[4096];
@@ -43,11 +45,11 @@ int main(int argc,char* argv[]) {
     ThreadPool &mypool=ThreadPool::getThreadPool();
     int serv_sock;
     int clnt_sock;
-    sockaddr_in serv_addr;
-    sockaddr_in clnt_addr;
+    sockaddr_in serv_addr{};
+    sockaddr_in clnt_addr{};
     socklen_t clnt_addr_size;
     epoll_event* ep_events;
-    epoll_event event;
+    epoll_event event{};
     int epfd,events_cnt;
 
     if(argc!=2){

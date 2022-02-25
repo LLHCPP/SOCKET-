@@ -6,6 +6,28 @@
 
 #IncludeRegexTransform: 
 
+/mnt/f/SERVER/ThreadPoll.hpp
+vector
+-
+queue
+-
+atomic
+-
+future
+-
+condition_variable
+-
+thread
+-
+functional
+-
+stdexcept
+-
+memory
+-
+boost/lockfree/queue.hpp
+/mnt/f/SERVER/boost/lockfree/queue.hpp
+
 /mnt/f/SERVER/main.cpp
 iostream
 -
@@ -20,5 +42,19 @@ cstring
 sys/time.h
 -
 sys/epoll.h
+-
+fcntl.h
+-
+errno.h
+-
+ThreadPoll.hpp
+/mnt/f/SERVER/ThreadPoll.hpp
+unordered_map
+-
+unordered_set
+-
+stack
+-
+cmath
 -
 
