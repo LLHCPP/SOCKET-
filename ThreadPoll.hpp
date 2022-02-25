@@ -28,9 +28,9 @@ private:
         MyPool.reserve(THREADPOOL_MAX_NUM);
         this->addThread(size);
     };
+public:
     ThreadPool operator=(ThreadPool& rhs)=delete;
     ThreadPool(ThreadPool& rhs)=delete;
-public:
     static ThreadPool& getThreadPool(){
         static ThreadPool ans;
         return ans;
